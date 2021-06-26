@@ -9,7 +9,7 @@ kaboom({
 
 // ACTION CONFIG
 const MOVE_SPEED = 120
-const ENEMY_SPEED = -20
+const ENEMY_SPEED = -50
 const JUMP_FORCE = 360
 const BIG_JUMP_FORCE = 550
 let CURRENT_JUMP_FORCE = JUMP_FORCE
@@ -31,6 +31,8 @@ loadSprite('pipe-top-right', 'hj2GK4n.png')
 loadSprite('pipe-bottom-left', 'c1cYSbt.png')
 loadSprite('pipe-bottom-right', 'nqQ79eI.png')
 
+
+
 // LEVEL 2 ASSETS
 loadSprite('blue-block', 'fVscIbn.png')
 loadSprite('blue-brick', '3e5YRQd.png')
@@ -51,26 +53,26 @@ scene("game", ({ level, score }) => {
       '            =*=         =%=                    ',
       '                                               ',
       '      =                                     -+ ',
-      '     ==         ^           ^           ^   () ',
-      '===================  =========   =    ========='
+      '     ==                    ^                () ',
+      '==============================   =    ========='
     ],
     [
-      '!                                                 !',
-      '!                                 J%J             !',
-      '!                                                 !',
-      '!                                                 !',
-      '!                $$                               !',
-      '!                                                 !',
-      '!                            x                    !',
-      '!                                                 !',
-      '!                                                 !',
-      '!                  %                              !',
-      '!                                                 !',
-      '!          x                      !               !',
-      '!   !*!                          !!               !',
-      '!                               !!!           -+  !',
-      '!             z                !!!!         z ()  !',
-      'JJJJJJJJJ    JJJJ  JJ   J    JJJJJJJJJJJJJ  JJJJJJJ'
+      '!                                                  !',
+      '!                                 J%J              !',
+      '!                                                  !',
+      '!                                                  !',
+      '!                $$                                !',
+      '!                                                  !',
+      '!                            x                     !',
+      '!                                                  !',
+      '!                                                  !',
+      '!                  %                               !',
+      '!                                                  !',
+      '!          x                      !                !',
+      '!   !*!                          !!                !',
+      '!                               !!!            -+  !',
+      '!             z                !!!!        J z ()  !',
+      'JJJJJJJJJJJJJJJJJ  J    JJJJJJJJJJJJ       JJJJJJJJ!'
     ]
   ]
 
@@ -91,21 +93,36 @@ scene("game", ({ level, score }) => {
     '!': [sprite('blue-block'), solid(), scale(0.5)],
     'J': [sprite('blue-brick'), solid(), scale(0.5)],
     'z': [sprite('blue-evil-shroom'), solid(), scale(0.5), 'dangerous'],
-    'x': [sprite('blue-steel'), solid(), scale(0.5)]
+    'x': [sprite('blue-steel'), solid(), scale(0.5)],
   }
 
   const gameLevel = addLevel(maps[level], levelCfg)
 
+  add([text('Level: ' + parseInt(level + 1)), pos(30, 60)])
   const scoreLabel = add([
     text(`Score: ${score}`),
-    pos(30, 30),
+    pos(30, 40),
     layer('ui'),
     {
       value: score,
     }
   ])
 
-  add([text('Level: ' + parseInt(level + 1)), pos(30, 6)])
+  const welcome = add([
+    text(`WELCOME TO SUPER LOGIO!`),
+    pos(30, 0),
+    layer('ui'),
+  ])
+
+
+  const player = add([
+    sprite('mario'),
+    solid(),
+    pos(30, 0),
+    body(),
+    big(),
+    origin('bot')
+  ])
 
   function big() {
     let timer = 0
@@ -137,18 +154,9 @@ scene("game", ({ level, score }) => {
     }
   }
 
-  const player = add([
-    sprite('mario'),
-    solid(),
-    pos(30, 0),
-    body(),
-    big(),
-    origin('bot')
-  ])
 
   action('mushroom', (m) => {
-    m.move(0, 25)
-    m.resolve()
+    m.move(20, 0)
   }
   )
 
@@ -179,7 +187,15 @@ scene("game", ({ level, score }) => {
   })
 
   action('dangerous', (d) => {
-    d.move(ENEMY_SPEED, 0)
+    d.move(-15, 0)
+    d.resolve()
+    // loop(5, () => {
+    //   d.move(-10, -5)
+    //   wait(3, () => {
+    //     d.move(20, 5)
+    //   });
+    // });
+
   })
 
   player.collides('dangerous', (d) => {
